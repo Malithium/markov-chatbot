@@ -1,0 +1,8 @@
+{
+	"Templates" : [
+		{	
+			"Type":"Greeting",
+			"Responses":["Hello there", "Well, hello", "Hi there", "Well hello there", "How's it going?", "What's up?", "Look who it is!", "hello how are you", "Greetings friend!", "Howdy Stranger", "Hey man", "How are things?"]
+		}
+	]
+}

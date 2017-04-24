@@ -1,5 +1,8 @@
 from random import randint
 from textblob import TextBlob
+import nltk
+from nltk.tag import pos_tag, map_tag
+import json
 import sys
 
 class MarkovKey:
@@ -17,7 +20,13 @@ class MarkovKey:
         return hash(self.key)
 
     def __eq__(self, other):
-        return self.key == other.key
+        if isinstance(other, self.__class__):
+            return self.key == other.key
+        else:
+            return self.key == other
+
+    def __ne__(self, other):
+        return not(self.key, other.key)
 
 class MarkovVal:
     def __init__(self, word, weight):
@@ -49,53 +58,44 @@ class Markov:
         sys.stdout.flush()
         tempStr = self.corpus.readlines()
         i = 0;
+        markov = {}
         for line in tempStr:
             i+=1
             sys.stdout.write("reading line " + str(i) + " of " + str(self.corpusSize) + "\r")
             sys.stdout.flush()
-            blob = TextBlob(line)
-            for idx, val in enumerate(blob.tags):
-                sect = blob.tags[idx]
-                if idx + 2 < len(blob.tags):
-                    sect2 = blob.tags[idx+1]
-                    value = blob.tags[idx+2]
-                    keyStr = MarkovKey(sect[0] + " " + sect2[0])
-                    keyStr.tags = sect[0][0] + " " + sect2[0][0]
-                    valueStr = MarkovVal(value[0], 0.1)
-                    valueStr.tag = value[0][0]
-                    if 'markov' in locals():
-                        if keyStr in markov:
-                            markov[keyStr].append(valueStr)
-                        else:
-                            markov[keyStr] = [valueStr]
-                    else:
-                        markov = {keyStr: [valueStr]}
-        return markov
-'''
-            #generates a 2 key markov chain
-            for ind, word in enumerate(tempStrArr):
-                
-                #if the value does not exceed the array sixe
-                if ind + 2 < len(tempStrArr):
-                    keyStr = MarkovKey(tempStrArr[ind] + " " + tempStrArr[ind+1])
-                    valueStr = MarkovVal(tempStrArr[ind + 2], 1)
-                    
-                    #if there is a variable called markov in the local scope
-                    if 'markov' in locals():
-                        #if the key already exists add it to value array
-                        if keyStr in markov:
-                            markov[keyStr].append(valueStr)
-                        else:
-                            markov[keyStr] = [valueStr]
-                    else:
-                        markov = {keyStr: [valueStr]}
-        return markov'''
+            strLine = str(line.lower().strip())
 
-        
-m = Markov('nietzsche.txt')
-print(m.markov)
-'''                
-print(tempStr)
-print("-------------------------------------------------------------------------")
-print(markov)
-'''
+            # parse the line into textblob
+            #blob = TextBlob(strLine)
+            text = nltk.word_tokenize(strLine)
+            posTagged = pos_tag(text)
+            simplifiedTags = [(word, map_tag('en-ptb', 'universal', tag)) for word, tag in posTagged]
+            #iterate over the textblob result to get the individual words and tags
+            for idx, val in enumerate(simplifiedTags):
+                sect = simplifiedTags[idx]
+                if idx + 1 < len(simplifiedTags):
+                    sect2 = simplifiedTags[idx+1]
+                    #the key value must consist of 2 words
+                    keyStr = MarkovKey(sect[0] + " " + sect2[0])
+                    keyStr.tags = sect[1] + " " + sect2[1]
+                    #the value is the word following the second key value
+                    leng = len(simplifiedTags)
+                    if leng > 2 and idx+2 <= leng-1:
+                        value = simplifiedTags[idx+2]
+                        valueStr = MarkovVal(value[0], 0.1)
+                        valueStr.tag = value[1]
+                    else:
+                        valueStr = MarkovVal("", 0.1)
+                        valueStr.tag = ""
+
+                    if len(markov) > 0:
+                        if keyStr in markov:
+                            markov[keyStr].append(valueStr)
+                        else:
+                            markov[keyStr] = [valueStr]
+                    else:
+                        markov = {keyStr: [valueStr]}
+        #return the generated markov chain
+        return markov
+
+M = Markov('Adele')
