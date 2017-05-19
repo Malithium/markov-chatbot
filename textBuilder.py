@@ -4,13 +4,15 @@ from nltk.tag import pos_tag, map_tag
 import json
 import sys
 
+class approvedTemp:
+    def __init__(self, name, values):
+        self.template = name
+        self.sentences = values
+
 class TextBuilder:
     def __init__(self, corpus_path):
         self.markov = Markov(corpus_path)
         self.templates = self.getTemplates()
-        self.start = False
-        self.txt = ""
-        self.key = ""
         self.sampleSentences = []
         self.approvedSentences = []
         self.generatedText = self.textBuild()
@@ -18,7 +20,7 @@ class TextBuilder:
     def getTemplates(self):
         sys.stdout.write("Step 2: retrieve templates\n")
         sys.stdout.flush()
-        with open("sample.json") as temp_json:
+        with open("templates.json") as temp_json:
             data = json.load(temp_json)
             return data["Templates"]
 
@@ -32,6 +34,7 @@ class TextBuilder:
             for val, tag in simplifiedTags:
                 Str += tag + " "
             Str.rstrip()
+            print(Str)
             signatures.append(Str)
         return signatures
 
@@ -79,14 +82,19 @@ class TextBuilder:
                                 if result is not None:
                                     self.sampleSentences.append(result)
 
-    def retrieveText(self, values):
+    def retrieveText(self, tempName, values):
         vals = values.split(" ")
-        for val in vals:
-            ival = int(val)
-            self.approvedSentences.append(self.sampleSentences[ival])
+        sentences = []
+        if values != "":
+            for val in vals:
+                ival = int(val)
+                sentences.append(self.sampleSentences[ival])
+            
+        apprved = approvedTemp(tempName, sentences)
+        return apprved
 
     def textBuild(self):
-        sentences = []
+        fTemps = []
         #Iterate over each template
         for temp in self.templates:
             self.sampleSentences = []
@@ -109,7 +117,6 @@ class TextBuilder:
                  print(ind, sentence)
 
             inp = input("input the index of each appropriate response to the " + temp["Type"] + " template\n")
-            self.retrieveText(str(inp))
-
-t = TextBuilder('test.txt')
-print(t.approvedSentences)
+            finalTemp = self.retrieveText(temp["Type"], str(inp))
+            fTemps.append(finalTemp)
+        return fTemps

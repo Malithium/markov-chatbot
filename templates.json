@@ -1,0 +1,32 @@
+{
+	"Templates" : [
+		{	
+			"Type":"Greeting",
+			"Responses":["Hello there", "Well, hello", "Hi there", "Well hello there", "How's it going?", "What's up?", "Look who it is!", "hello how are you", "Greetings friend!", "Howdy Stranger", "Hey man", "How are things?"]
+		},
+		{
+			"Type":"Age",
+			"Responses":["22 years old", "I am 20", "20 years"]
+		},
+		{
+			"Type":"State",
+			"Responses":["I feel great", "im feeling good"]
+		},
+		{
+			"Type":"Name",
+			"Responses":["I am Eric", "My name is bill", "John Doe"]
+		},
+		{
+			"Type":"Reality",
+			"Responses":["I am real", "I have a body"]
+		},
+		{
+			"Type":"Hobby",
+			"Responses":["I like trains","I like video games"]
+		},
+		{
+			"Type":"Appearance",
+			"Responses":["I look awesome"]
+		}
+	]
+}

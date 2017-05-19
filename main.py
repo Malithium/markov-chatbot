@@ -1,5 +1,4 @@
 from random import randint
-from textblob import TextBlob
 import nltk
 from nltk.tag import pos_tag, map_tag
 import json
@@ -9,12 +8,6 @@ class MarkovKey:
     def __init__(self, key):
         self.key = key
         self.tags = ""
-
-    def __str__(self):
-        return self.key
-
-    def __repr__(self):
-        return self.key
 
     def __hash__(self):
         return hash(self.key)
@@ -28,21 +21,26 @@ class MarkovKey:
     def __ne__(self, other):
         return not(self.key, other.key)
 
+
 class MarkovVal:
     def __init__(self, word, weight):
         self.word = word
         self.tag = ""
         self.weight = weight
 
-    def __str__(self):
-        return self.word
+    def __hash__(self):
+        return hash(self.word)
 
-    def __repr__(self):
-        return self.word
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.word == other.word
+        else:
+            return self.word == other
         
     def setWeight(self, weight):
         self.weight = weight
-
+        print("Weight is now: " + str(weight))
+    
 class Markov:
     def __init__(self, corpus_path):
         self.corpus = open(corpus_path, 'r')
@@ -65,27 +63,28 @@ class Markov:
             sys.stdout.flush()
             strLine = str(line.lower().strip())
 
-            # parse the line into textblob
-            #blob = TextBlob(strLine)
             text = nltk.word_tokenize(strLine)
             posTagged = pos_tag(text)
             simplifiedTags = [(word, map_tag('en-ptb', 'universal', tag)) for word, tag in posTagged]
-            #iterate over the textblob result to get the individual words and tags
+            
+			#iterate over the result to get the individual words and tags
             for idx, val in enumerate(simplifiedTags):
                 sect = simplifiedTags[idx]
                 if idx + 1 < len(simplifiedTags):
                     sect2 = simplifiedTags[idx+1]
-                    #the key value must consist of 2 words
+                    
+					#the key value must consist of 2 words
                     keyStr = MarkovKey(sect[0] + " " + sect2[0])
                     keyStr.tags = sect[1] + " " + sect2[1]
-                    #the value is the word following the second key value
+                    
+					#the value is the word following the second key value
                     leng = len(simplifiedTags)
                     if leng > 2 and idx+2 <= leng-1:
                         value = simplifiedTags[idx+2]
-                        valueStr = MarkovVal(value[0], 0.1)
+                        valueStr = MarkovVal(value[0], 1)
                         valueStr.tag = value[1]
                     else:
-                        valueStr = MarkovVal("", 0.1)
+                        valueStr = MarkovVal("", 1)
                         valueStr.tag = ""
 
                     if len(markov) > 0:
@@ -95,7 +94,6 @@ class Markov:
                             markov[keyStr] = [valueStr]
                     else:
                         markov = {keyStr: [valueStr]}
+						
         #return the generated markov chain
         return markov
-
-M = Markov('Adele')
