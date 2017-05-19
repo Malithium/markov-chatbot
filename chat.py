@@ -13,7 +13,7 @@ class chatBot:
             return json.load(data_File)
     
     def checkIntent(self, message):
-        
+        # TODO: Move this functionality to the JSON file to avoid repeating code
         # read in the templates from our brain file
         for temp in self.brain["Templates"]:
             if temp["Intent"] == "Greeting":
@@ -26,11 +26,32 @@ class chatBot:
                     numOfKeys = len(temp["Keys"])
                     randomNm = randint(0,numOfKeys-1);
                     return temp["Keys"][randomNm]
-            elif temp["Intent"] == "Feeling":
-                if "feeling" in message:
+            elif temp["Intent"] == "State":
+                if "feel" in message:
                     numOfKeys = len(temp["Keys"])
                     randomNm = randint(0,numOfKeys-1);
                     return temp["Keys"][randomNm]
+			elif temp["Intent"] == "Name":
+                if "name" in message:
+                    numOfKeys = len(temp["Keys"])
+                    randomNm = randint(0,numOfKeys-1);
+                    return temp["Keys"][randomNm]
+			elif temp["Intent"] == "Reality":
+                if "real" in message:
+                    numOfKeys = len(temp["Keys"])
+                    randomNm = randint(0,numOfKeys-1);
+                    return temp["Keys"][randomNm]
+			elif temp["Intent"] == "Hobby":
+                if "hobby" in message:
+                    numOfKeys = len(temp["Keys"])
+                    randomNm = randint(0,numOfKeys-1);
+                    return temp["Keys"][randomNm]
+			elif temp["Intent"] == "Appearance":
+                if "look" in message:
+                    numOfKeys = len(temp["Keys"])
+                    randomNm = randint(0,numOfKeys-1);
+                    return temp["Keys"][randomNm]
+			
 
     def getWeightedValue(self, values):
         
