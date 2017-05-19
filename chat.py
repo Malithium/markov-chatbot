@@ -31,27 +31,27 @@ class chatBot:
                     numOfKeys = len(temp["Keys"])
                     randomNm = randint(0,numOfKeys-1);
                     return temp["Keys"][randomNm]
-			elif temp["Intent"] == "Name":
+            elif temp["Intent"] == "Name":
                 if "name" in message:
                     numOfKeys = len(temp["Keys"])
                     randomNm = randint(0,numOfKeys-1);
                     return temp["Keys"][randomNm]
-			elif temp["Intent"] == "Reality":
+            elif temp["Intent"] == "Reality":
                 if "real" in message:
                     numOfKeys = len(temp["Keys"])
                     randomNm = randint(0,numOfKeys-1);
                     return temp["Keys"][randomNm]
-			elif temp["Intent"] == "Hobby":
+            elif temp["Intent"] == "Hobby":
                 if "hobby" in message:
                     numOfKeys = len(temp["Keys"])
                     randomNm = randint(0,numOfKeys-1);
                     return temp["Keys"][randomNm]
-			elif temp["Intent"] == "Appearance":
+            elif temp["Intent"] == "Appearance":
                 if "look" in message:
                     numOfKeys = len(temp["Keys"])
                     randomNm = randint(0,numOfKeys-1);
                     return temp["Keys"][randomNm]
-			
+            
 
     def getWeightedValue(self, values):
         
@@ -103,6 +103,3 @@ class chatBot:
             self.generateMessage(key)
             print("ChatBot: " + self.start + self.follow)
             inp = input()
-
-t = chatBot("brain.json")
-t.chat()
